@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Product, Order, OrderItem } from '@/types';
 import { products as initialProducts } from '@/data/products';
@@ -13,7 +12,7 @@ interface StoreContextType {
   removeFromCart: (productId: string) => void;
   updateCartItemQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  placeOrder: (customerName: string, contactNumber: string, deliveryAddress: string) => void;
+  placeOrder: (customerName: string, contactNumber: string, deliveryAddress: string) => Order | undefined;
   updateOrderStatus: (orderId: string, status: 'pending' | 'in-progress' | 'delivered') => void;
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (product: Product) => void;
@@ -85,14 +84,14 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setCart([]);
   };
 
-  const placeOrder = (customerName: string, contactNumber: string, deliveryAddress: string) => {
+  const placeOrder = (customerName: string, contactNumber: string, deliveryAddress: string): Order | undefined => {
     if (cart.length === 0) {
       toast({
         title: "Error",
         description: "Your cart is empty",
         variant: "destructive"
       });
-      return;
+      return undefined;
     }
     
     const totalAmount = cart.reduce((sum, item) => sum + item.totalPrice, 0);
